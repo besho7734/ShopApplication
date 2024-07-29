@@ -85,10 +85,13 @@
                                 <div class="pro-qty">
                                             <input type="text" asp-for="@Model.Q" value="1">
                                 </div>
+                                <div>
+                                    <input type="hidden" asp-for="@Model.proId">
                             </div>
                                 <a asp-action="AddCart2" asp-route-id="@Model.pro.Id" class="primary-btn">add to cart</a>
                         </div>
-                        </form>
+                                <button type="submit" class="primary-btn">add to cart</button>
+                        </div>
                         <div class="product__details__btns__option">
                             <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>
                             <a href="#"><i class="fa fa-exchange"></i> Add To Compare</a>
@@ -98,6 +101,7 @@
                             <img src="img/shop-details/details-payment.png" alt="">
                             <ul>
                                 <li><span>SKU:</span> @Model.pro.Id</li>
+                        </form>
                                 <li><span>Categories:</span> @Model.pro.Category.Name</li>
                             </ul>
                         </div>
