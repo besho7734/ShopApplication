@@ -2,10 +2,11 @@
 using ShopApplication.Models;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace ShopApplication.Data
 {
-    public class ApplicationDbContext: DbContext
+    public class ApplicationDbContext: IdentityDbContext<AppUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -22,6 +23,7 @@ namespace ShopApplication.Data
                 new Category { Name = "Bags", Id = 3 },
                 new Category { Name = "Accessories", Id = 4 }
                 );
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApplication.Data;
 using ShopApplication.Models;
@@ -6,6 +7,7 @@ using ShopApplication.ViewModel;
 
 namespace ShopApplication.Controllers
 {
+   
     public class ShopController(ApplicationDbContext _db) : Controller
     {
         public IActionResult Index()
@@ -36,21 +38,21 @@ namespace ShopApplication.Controllers
             };
             return View(categorywithproduct);
         }
-        public IActionResult ViewProductDetails(int id)
+        public async Task<IActionResult> ViewProductDetails(int id)
         {
-            var product = _db.products.Include(m=>m.Category).ToList();
+            var prod = await _db.products.Include(m => m.Category).FirstOrDefaultAsync(x => x.Id == id);
+            var product = await _db.products.Include(m=>m.Category).Where(x=>x.CategoryID==prod.CategoryID).ToListAsync();
             var products = new CartProductViewModel()
             {
                 products = product,
-                pro = _db.products.FirstOrDefault(x => x.Id == id),
+                pro = prod,
+                proId = id
             };
-            ViewData["categoryid"] = products.pro.CategoryID;
             return View(products);
         }
         public IActionResult ProductCategory1(int id)
         {
-            ViewData["id"] = id;
-            var pro = _db.products.ToList();
+            var pro = _db.products.Where(x => x.CategoryID == id).ToList();
             var cat = _db.categories.ToList();
             var categorywithproduct = new CategoryViewModel()
             {
@@ -81,15 +83,17 @@ namespace ShopApplication.Controllers
         }
         public IActionResult AddCart2(CartProductViewModel p) 
         {
-            var pro=_db.carts.FirstOrDefault(x=>x.ProductID == p.pro.Id );
+            var pro=_db.carts.FirstOrDefault(x=>x.ProductID == p.proId );
+            var prod=_db.products.FirstOrDefault(x=>x.Id==p.proId);
             if(pro == null)
             {
-                var cart = new Cart() { ProductID = p.pro.Id , Quantity = p.Q};
+                var cart = new Cart() { ProductID = prod.Id , Quantity = p.Q};
                 _db.carts.Add(cart);
             }
             else
             {
                 pro.Quantity += p.Q;
+                _db.carts.Update(pro);
             }
             _db.SaveChanges();
             return RedirectToAction("Shop");
@@ -101,9 +105,15 @@ namespace ShopApplication.Controllers
             _db.SaveChanges();
             return RedirectToAction("ShopCart");
         }
-        public IActionResult UpdateShopCart(List<Cart> cart )
+        public IActionResult UpdateShopCart(List<int> q)
         {
+            int i = 0;
             var carts = _db.carts.Include(x=>x.product).ToList();
+            foreach (var cart in carts) 
+            {
+                cart.Quantity = q[i];
+                i++;
+            }
             _db.SaveChanges();
             return RedirectToAction("ShopCart");
         }

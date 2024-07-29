@@ -12,5 +12,7 @@ namespace ShopApplication.Models
         [ForeignKey("ProductID")]
         public Product? product { get; set; }
         public int Quantity { get; set; }
+
+        public AppUser? UserCart { get; set; }
     }
 }

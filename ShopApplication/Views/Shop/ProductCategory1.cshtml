@@ -192,8 +192,6 @@
                 <div class="row">
                     @foreach (var product in Model.products)
                     {
-                        if (product.CategoryID == (int)ViewData["id"])
-                        {
                         <div class="col-lg-4 col-md-6 col-sm-6">
                             <div class="product__item">
                                 <a asp-controller="Shop" asp-action="ViewProductDetails" asp-route-id="@product.Id" class="product__item__pic set-bg">
@@ -217,7 +215,6 @@
                                 </div>
                             </div>
                         </div>
-                        }
                     }
                 </div>
                 <div class="row">

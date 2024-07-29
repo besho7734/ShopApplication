@@ -79,17 +79,16 @@
                                 </label>
                             </div>
                         </div>
-                        <form method="post" asp-controller="Shop">
+                        <form method="post" asp-controller="Shop" asp-action="AddCart2"> 
                         <div class="product__details__cart__option">
                             <div class="quantity">
                                 <div class="pro-qty">
-                                            <input type="text" asp-for="@Model.Q" value="1">
+                                    <input type="text" asp-for="@Model.Q" value="1">
                                 </div>
                                 <div>
                                     <input type="hidden" asp-for="@Model.proId">
+                                </div>
                             </div>
-                                <a asp-action="AddCart2" asp-route-id="@Model.pro.Id" class="primary-btn">add to cart</a>
-                        </div>
                                 <button type="submit" class="primary-btn">add to cart</button>
                         </div>
                         <div class="product__details__btns__option">
@@ -269,8 +268,6 @@
         <div class="row">
             @foreach (var product in Model.products)
             {
-                if (product.CategoryID == (int)ViewData["categoryid"])
-                {
                     <div class="col-lg-4 col-md-6 col-sm-6">
                         <div class="product__item">
                         <a asp-controller="Shop" asp-action="ViewProductDetails" asp-route-id="@product.Id" class="product__item__pic set-bg">
@@ -294,7 +291,6 @@
                         </div>
                     </div>
                 </div>
-                }
             }
         </div>
     </div>

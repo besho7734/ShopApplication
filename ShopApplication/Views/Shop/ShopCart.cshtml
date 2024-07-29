@@ -3,6 +3,7 @@
     Layout = "_shop";
     decimal x = 0;
     decimal y = 0;
+    List<int> q = new List<int>();
 }
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-option">
@@ -60,6 +61,7 @@
                                     @{
                                         x = @cart.product.Price * @cart.Quantity;
                                         y += x;
+                                        q.Add(cart.Quantity);
                                     }
                                     <td class="cart__price">$ @x </td>
                                     <td class="cart__close"><a asp-controller="Shop" asp-action="DeleteShopCart" asp-route-id="@cart.Id"><i class="fa fa-close"></i></a></td>
@@ -76,10 +78,16 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="continue__btn update__btn">
-                            <a asp-controller="Shop" asp-action="UpdateShopCart" asp-route-cart="@Model" ><i class="fa fa-spinner"></i> Update cart</a>
+                            <a asp-controller="Shop" asp-action="UpdateShopCart" asp-route-q="q" ><i class="fa fa-spinner"></i> Update cart</a>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div>
+                @foreach(var c in q)
+                {
+                    c.ToString();
+                }
             </div>
             <div class="col-lg-4">
                 <div class="cart__discount">
