@@ -3,7 +3,6 @@
     Layout = "_shop";
     decimal x = 0;
     decimal y = 0;
-    List<int> q = new List<int>();
 }
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-option">
@@ -54,14 +53,15 @@
                                     <td class="quantity__item">
                                         <div class="quantity">
                                             <div class="pro-qty-2">
-                                                <input type="text" asp-for="@cart.Quantity" value="@cart.Quantity">
+                                                <input class="Quantity" type="text" asp-for="@cart.Quantity" value="@cart.Quantity">
+                                                <input class="CartId" type="hidden" asp-for="@cart.Id">
                                             </div>
+                                            
                                         </div>
                                     </td>
                                     @{
                                         x = @cart.product.Price * @cart.Quantity;
                                         y += x;
-                                        q.Add(cart.Quantity);
                                     }
                                     <td class="cart__price">$ @x </td>
                                     <td class="cart__close"><a asp-controller="Shop" asp-action="DeleteShopCart" asp-route-id="@cart.Id"><i class="fa fa-close"></i></a></td>
@@ -78,17 +78,12 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="continue__btn update__btn">
-                            <a asp-controller="Shop" asp-action="UpdateShopCart" asp-route-q="q" ><i class="fa fa-spinner"></i> Update cart</a>
+                            <a asp-controller="Shop" asp-action="UpdateShopCart"><i class="fa fa-spinner"></i> Update cart</a>
                         </div>
                     </div>
                 </div>
             </div>
-            <div>
-                @foreach(var c in q)
-                {
-                    c.ToString();
-                }
-            </div>
+  
             <div class="col-lg-4">
                 <div class="cart__discount">
                     <h6>Discount codes</h6>
@@ -109,4 +104,20 @@
         </div>
     </div>
 </section>
+<script>
+    const QuantityInput = document.querySelectorAll('.Quantity');
+    const IdInput = document.querySelectorAll('.CartId');
+    console.log(QuantityInput)
+    QuantityInput.forEach((e, i) => {
+        console.log(e)
+        e.addEventListener("change", () => {
+            var quantity = parseInt(e.value)
+            var Id = parseInt(IdInput[i].value)
+            const url = /Shop/UpdateShopCart ? quantity = ${ quantity }& id=${ Id };
+            window.location.href = url;
+        })
+    })
+
+
+</script>
 <!-- Shopping Cart Section End -->

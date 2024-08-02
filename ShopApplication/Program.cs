@@ -3,18 +3,21 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using ShopApplication.Data;
 using ShopApplication.Models;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using ShopApplication.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();   
+builder.Services.AddRazorPages();
+builder.Services.AddScoped<IEmailSender, EmailService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
-builder.Services.AddDefaultIdentity<AppUser>(options =>
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     options.SignIn.RequireConfirmedEmail = false
-).AddEntityFrameworkStores<ApplicationDbContext>();
+).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
 var app = builder.Build();
 

@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Product>
+@{
+    Layout = "_DashBoard";
+}
+
+
+<div class="dash-content">
+    <div class="overview">
+        <div class="title">
+            <i class="uil uil-tachometer-fast-alt"></i>
+            <span class="text">All Product</span>
+        </div>
+    </div>
+    <div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td class="table-light">id</td>
+                    <td class="table-light">Name</td>
+                    <td class="table-light">img</td>
+                    <td class="table-light">Description</td>
+                    <td class="table-light">price</td>
+                    <td class="table-light">Category</td>
+                    <td class="table-light">operation</td>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                        <td><img src="~/img/product/@item.img" alt=""></td>
+                        <td>@item.Description</td>
+                        <td>@item.Price</td>
+                        <td>@item.Category.Name</td>
+                        <td>
+
+
+                            <a class="btn btn-success" asp-action="Edite" asp-route-Id="@item.Id" role="button">
+                                <span class="material-symbols-outlined">
+                                    Edit
+                                </span>
+                            </a>
+                            <a class="btn btn-danger " asp-action="Delete" asp-route-id="@item.Id" role="button">
+                                <span class="material-symbols-outlined">
+                                    Delete
+                                </span>
+                            </a>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+
+
+
+</div>

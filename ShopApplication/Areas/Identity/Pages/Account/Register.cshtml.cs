@@ -15,10 +15,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using ShopApplication.Models;
+using ShopApplication.Utility;
 
 namespace ShopApplication.Areas.Identity.Pages.Account
 {
@@ -26,6 +29,7 @@ namespace ShopApplication.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserStore<AppUser> _userStore;
         private readonly IUserEmailStore<AppUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
@@ -34,12 +38,14 @@ namespace ShopApplication.Areas.Identity.Pages.Account
         public RegisterModel(
             UserManager<AppUser> userManager,
             IUserStore<AppUser> userStore,
+            RoleManager<IdentityRole> roleManager,
             SignInManager<AppUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
             _userStore = userStore;
+            _roleManager = roleManager;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
@@ -98,11 +104,29 @@ namespace ShopApplication.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            public string? Role { get; set; }
+            [ValidateNever]
+            public IEnumerable<SelectListItem> RoleList { get; set; }
         }
 
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            if (!await _roleManager.RoleExistsAsync(RL.RoleAdmin))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(RL.RoleAdmin));
+                await _roleManager.CreateAsync(new IdentityRole(RL.RoleEmplyee));
+                await _roleManager.CreateAsync(new IdentityRole(RL.RoleCustomer));
+            }
+            Input = new()
+            {
+                RoleList = _roleManager.Roles.Select(m => m.Name).Select(m => new SelectListItem()
+                {
+                    Text = m,
+                    Value = m
+                })
+            };
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -122,7 +146,14 @@ namespace ShopApplication.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-
+                    if (!string.IsNullOrEmpty(Input.Role)) 
+                    {
+                        await _userManager.AddToRoleAsync(user, Input.Role);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, RL.RoleCustomer);
+                    }
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShopApplication.Models
@@ -12,7 +13,9 @@ namespace ShopApplication.Models
         [ForeignKey("ProductID")]
         public Product? product { get; set; }
         public int Quantity { get; set; }
+        public string UserId { get; set; }
+        [ForeignKey("UserId")]
+        public AppUser? User { get; set; }
 
-        public AppUser? UserCart { get; set; }
     }
 }

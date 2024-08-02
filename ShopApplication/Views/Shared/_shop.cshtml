@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using ShopApplication.Utility
 
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
@@ -41,14 +42,6 @@
             <div class="offcanvas__links">
                 <partial name="_LoginPartial" />
             </div>
-            <div class="offcanvas__top__hover">
-                <span>Usd <i class="arrow_carrot-down"></i></span>
-                <ul>
-                    <li>USD</li>
-                    <li>EUR</li>
-                    <li>USD</li>
-                </ul>
-            </div>
         </div>
         <div class="offcanvas__nav__option">
             <a href="#" class="search-switch"><img src="~/img/icon/search.png" alt=""></a>
@@ -77,25 +70,26 @@
                             <div class="header__top__links">
                                 @if (SignInManager.IsSignedIn(User))
                                 {
-                                    <a id="manage" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-                                    <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                                        <button id="logout" type="submit">Logout</button>
-                                    </form>
-
+                                    if(User.IsInRole(RL.RoleAdmin) || User.IsInRole(RL.RoleEmplyee))
+                                    {
+                                        <a asp-controller="DashBoard" asp-action="Index">DashBoard</a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
+                                    }
+                                    <div class="header__top__links">
+                                        <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                            <button type="submit">Logout</button>
+                                        </form>
+                                    </div>
+                               
                                 }
                                 else
                                 {
                                     <a id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
                                     <a id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
                                 }
-                            </div>
-                            <div class="header__top__hover">
-                                <span>Usd <i class="arrow_carrot-down"></i></span>
-                                <ul>
-                                    <li>USD</li>
-                                    <li>EUR</li>
-                                    <li>USD</li>
-                                </ul>
                             </div>
                         </div>
                     </div>
@@ -133,7 +127,10 @@
                     <div class="header__nav__option">
                         <a href="#" class="search-switch"><img src="~/img/icon/search.png" alt=""></a>
                         <a href="#"><img src="~/img/icon/heart.png" alt=""></a>
-                        <a asp-controller="Shop" asp-action="Shopcart"><img src="~/img/icon/cart.png" alt=""></a>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <a asp-controller="Shop" asp-action="Shopcart"><img src="~/img/icon/cart.png" alt=""></a>
+                        }
                     </div>
                 </div>
             </div>
@@ -230,6 +227,8 @@
     <script src="~/js/mixitup.min.js"></script>
     <script src="~/js/owl.carousel.min.js"></script>
     <script src="~/js/main.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 
 </html>

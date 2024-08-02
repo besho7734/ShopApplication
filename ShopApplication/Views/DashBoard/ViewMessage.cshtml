@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Contact>
+@{
+    Layout = "_DashBoard";
+}
+<div class="dash-content">
+    <div class="overview">
+        <div class="title">
+            <i class="uil uil-tachometer-fast-alt"></i>
+            <span class="text">All Product</span>
+        </div>
+    </div>
+    <div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td class="table-light">id</td>
+                    <td class="table-light">Name</td>
+                    <td class="table-light">Email</td>
+                    <td class="table-light">Message</td>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                        <td>@item.Email</td>
+                        <td>@item.Message</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+
+
+
+</div>

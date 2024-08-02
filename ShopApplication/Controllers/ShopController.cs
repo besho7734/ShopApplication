@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ShopApplication.Data;
 using ShopApplication.Models;
 using ShopApplication.ViewModel;
+using System.Security.Claims;
 
 namespace ShopApplication.Controllers
 {
@@ -63,15 +64,17 @@ namespace ShopApplication.Controllers
         }
         public IActionResult ShopCart()
         {
-            var carts = _db.carts.Include(x => x.product).ToList();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var carts = _db.carts.Include(x => x.product).Where(m=>m.UserId==userId).ToList();
             return View(carts);
         }
         public IActionResult AddCart(int id) 
         {
-            var pro=_db.carts.FirstOrDefault(x=>x.ProductID == id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var pro =_db.carts.Where(m=>m.UserId==userId).FirstOrDefault(x=>x.ProductID == id);
             if(pro == null)
             {
-                var cart = new Cart() { ProductID = id, Quantity = 1};
+                var cart = new Cart() { ProductID = id, Quantity = 1, UserId = userId };
                 _db.carts.Add(cart);
             }
             else
@@ -105,15 +108,21 @@ namespace ShopApplication.Controllers
             _db.SaveChanges();
             return RedirectToAction("ShopCart");
         }
-        public IActionResult UpdateShopCart(List<int> q)
+        public IActionResult UpdateShopCart(int quantity, int id )
         {
-            int i = 0;
-            var carts = _db.carts.Include(x=>x.product).ToList();
-            foreach (var cart in carts) 
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UpdatedProduct = _db.carts.Where(c => c.UserId == userId).SingleOrDefault(c => c.Id == id);
+
+            if (quantity > 0)
             {
-                cart.Quantity = q[i];
-                i++;
+                UpdatedProduct.Quantity = quantity;
+
             }
+            else
+            {
+                _db.carts.Remove(UpdatedProduct);
+            }
+
             _db.SaveChanges();
             return RedirectToAction("ShopCart");
         }
