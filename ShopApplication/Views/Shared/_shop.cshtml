@@ -12,6 +12,7 @@
     <meta name="keywords" content="Male_Fashion, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="@Html.Raw(ViewData["__RequestVerificationToken"])">
     <title>Male-Fashion | Template</title>
 
     <!-- Google Font -->
@@ -27,6 +28,8 @@
     <link rel="stylesheet" href="~/css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="~/css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="~/css/style.css" type="text/css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Shopapplication.styles.css" asp-append-version="true" />
 </head>
 
 <body>
@@ -79,8 +82,8 @@
                                         <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
                                     }
                                     <div class="header__top__links">
-                                        <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                                            <button type="submit">Logout</button>
+                                        <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Shop", new { area = "" })">
+                                            <button class="bg-black text-white" style="background:#111111;border:none;box-shadow:none;outline:none " type="submit">Logout</button>
                                         </form>
                                     </div>
                                
@@ -109,16 +112,9 @@
                             <li class="active"><a asp-controller="Shop" asp-action="Index">Home</a></li>
                             <li><a asp-controller="Shop" asp-action="Shop">Shop</a></li>
                             <li>
-                                <a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="./about.html">About Us</a></li>
-                                    <li><a href="./shop-details.html">Shop Details</a></li>
-                                    <li><a href="./shopping-cart.html">Shopping Cart</a></li>
-                                    <li><a href="./checkout.html">Check Out</a></li>
-                                    <li><a href="./blog-details.html">Blog Details</a></li>
-                                </ul>
+                                <a asp-controller="Shop" asp-action="AboutUs">ِAbout Us</a>
                             </li>
-                            <li><a href="./blog.html">Blog</a></li>
+                            <li><a asp-controller="Shop" asp-action="Viewblog">Blog</a></li>
                             <li><a asp-controller="Shop" asp-action="Contact">Contacts</a></li>
                         </ul>
                     </nav>

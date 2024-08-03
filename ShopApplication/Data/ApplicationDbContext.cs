@@ -15,6 +15,7 @@ namespace ShopApplication.Data
         public DbSet<Product> products { get; set; }
         public DbSet<Category> categories { get; set; }
         public DbSet<Cart> carts { get; set; }
+        public DbSet<Blog> blogs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Category>().HasData(

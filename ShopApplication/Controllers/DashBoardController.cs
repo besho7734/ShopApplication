@@ -68,5 +68,56 @@ namespace ShopApplication.Controllers
             return View(mess); 
         }
 
+        public IActionResult AddBlog()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult AddBlog(Blog blog)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(blog);
+            }
+            _db.blogs.Add(blog);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public IActionResult ViewBlog()
+        {
+            var blog = _db.blogs.ToList();
+            return View(blog);
+        }
+        public IActionResult DeleteBlog(int id)
+        {
+            Blog blog = _db.blogs.FirstOrDefault(x => x.Id == id);
+            _db.blogs.Remove(blog);
+            _db.SaveChanges();
+            return RedirectToAction("ViewBlog");
+
+        }
+        public IActionResult EditBlog(int id)
+        {
+            Blog blog = _db.blogs.FirstOrDefault(y => y.Id == id);
+
+            return View(blog);
+        }
+        [HttpPost]
+        public IActionResult EditBlog(Blog blog)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("EditBlog");
+            }
+            Blog pl = _db.blogs.SingleOrDefault(c => c.Id == blog.Id);
+            pl.Title = blog.Title;
+            pl.Author = blog.Author;
+            pl.Description = blog.Description;
+            pl.Img = blog.Img;
+            _db.blogs.Update(pl);
+            _db.SaveChanges();
+
+            return RedirectToAction("ViewBlog");
+        }
     }
 }

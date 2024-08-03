@@ -12,8 +12,8 @@
                 <div class="breadcrumb__text">
                     <h4>Shopping Cart</h4>
                     <div class="breadcrumb__links">
-                        <a href="./index.html">Home</a>
-                        <a href="./shop.html">Shop</a>
+                        <a asp-action="Index">Home</a>
+                        <a asp-action="Shop">Shop</a>
                         <span>Shopping Cart</span>
                     </div>
                 </div>
@@ -50,14 +50,13 @@
                                             <h5 asp-for="@cart.product.Price" >$@cart.product.Price</h5>
                                         </div>
                                     </td>
-                                    <td class="quantity__item">
-                                        <div class="quantity">
-                                            <div class="pro-qty-2">
-                                                <input class="Quantity" type="text" asp-for="@cart.Quantity" value="@cart.Quantity">
-                                                <input class="CartId" type="hidden" asp-for="@cart.Id">
+                                        <td class="quantity__item">
+                                            <div class="quantity">
+                                                <div class="pro-qty-2">
+                                                    <input class="Quantity" name="" type="text" asp-for="@cart.Quantity" value="@cart.Quantity">
+                                                    <input class="CartId" type="hidden" asp-for="@cart.Id">
+                                                </div>
                                             </div>
-                                            
-                                        </div>
                                     </td>
                                     @{
                                         x = @cart.product.Price * @cart.Quantity;
@@ -78,7 +77,7 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="continue__btn update__btn">
-                            <a asp-controller="Shop" asp-action="UpdateShopCart"><i class="fa fa-spinner"></i> Update cart</a>
+                            <a href="#" id="updateCartButton"><i class="fa fa-spinner"></i> Update cart</a>
                         </div>
                     </div>
                 </div>
@@ -105,19 +104,59 @@
     </div>
 </section>
 <script>
-    const QuantityInput = document.querySelectorAll('.Quantity');
-    const IdInput = document.querySelectorAll('.CartId');
-    console.log(QuantityInput)
-    QuantityInput.forEach((e, i) => {
-        console.log(e)
-        e.addEventListener("change", () => {
-            var quantity = parseInt(e.value)
-            var Id = parseInt(IdInput[i].value)
-            const url = /Shop/UpdateShopCart ? quantity = ${ quantity }& id=${ Id };
-            window.location.href = url;
-        })
-    })
+    document.addEventListener('DOMContentLoaded', () => {
+        const updateCartButton = document.getElementById('updateCartButton');
 
+        updateCartButton.addEventListener("click", async (event) => {
+            event.preventDefault(); // Prevent the default link behavior
 
+            const quantityInputs = document.querySelectorAll('.Quantity');
+            const idInputs = document.querySelectorAll('.CartId');
+
+            // Prepare data for sending
+            const cartItems = Array.from(quantityInputs).map((input, index) => {
+                const quantity = parseInt(input.value, 10);
+                const id = parseInt(idInputs[index].value, 10);
+
+                if (isNaN(quantity) || isNaN(id)) {
+                    console.error('Invalid input values');
+                    return null; // Skip invalid data
+                }
+
+                return { quantity, id };
+            }).filter(item => item !== null); // Remove any invalid items
+
+            if (cartItems.length === 0) {
+                console.error('No valid items to update');
+                return;
+            }
+
+            // Get CSRF token from meta tag
+            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+
+            try {
+                // Send data to the server
+                const response = await fetch('/Shop/UpdateShopCart', {
+                    method: 'POST', // or 'PUT' depending on your API
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken // Include CSRF token if available
+                    },
+                    body: JSON.stringify(cartItems)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                // Handle success or reload the page
+                console.log('Cart updated successfully');
+                window.location.reload(); // Optional: reload to reflect changes
+            } catch (error) {
+                console.error('Failed to update cart:', error);
+            }
+        });
+    });
 </script>
 <!-- Shopping Cart Section End -->
