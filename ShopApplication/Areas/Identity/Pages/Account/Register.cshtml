@@ -30,7 +30,7 @@
             <div class="form-floating mb-3">
                 <select asp-for="Input.Role" asp-items="@Model.Input.RoleList" class="form-control"></select>
             </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg" style="background-color :black; color:white ">Register</button>
+            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg" style="background-color :black; color:white;margin-top:13px ">Register</button>
         </form>
     </div>
     <div class="col-md-6 col-md-offset-2">
@@ -66,7 +66,8 @@
         </section>
     </div>
 </div>
-
+<section class="latest spad">
+</section>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

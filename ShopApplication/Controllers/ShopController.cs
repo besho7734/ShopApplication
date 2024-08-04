@@ -30,17 +30,39 @@ namespace ShopApplication.Controllers
             _db.SaveChanges();
             return View();
         }
-        
-        public IActionResult Shop()
+        [HttpGet]
+        public IActionResult Shop(decimal? min, decimal? max)
         {
-            var pro = _db.products.ToList();
-            var cat= _db.categories.ToList();
-            var categorywithproduct = new CategoryViewModel()
+            var cat = _db.categories.ToList();
+            if (min == null)
             {
-                products = pro,
-                categories = cat,
-            };
-            return View(categorywithproduct);
+                var pro = _db.products.ToList();
+                var categorywithproduct = new CategoryViewModel()
+                {
+                    products = pro,
+                    categories = cat,
+                };
+                return View(categorywithproduct);
+            }
+            else
+            {
+                if (max == null) {
+                    var prod = _db.products.Where(x => x.Price >= min).ToList();
+                    var categoryproduct = new CategoryViewModel()
+                    {
+                        products = prod,
+                        categories = cat,
+                    };
+                    return View(categoryproduct);
+                }
+                var pro = _db.products.Where(x=>x.Price>=min && x.Price <= max).ToList();
+                var categorywithproduct = new CategoryViewModel()
+                {
+                    products = pro,
+                    categories = cat,
+                };
+                return View(categorywithproduct);
+            }
         }
         public async Task<IActionResult> ViewProductDetails(int id)
         {
@@ -69,16 +91,39 @@ namespace ShopApplication.Controllers
         {
             return View();
         }
-        public IActionResult ProductCategory1(int id)
+        public IActionResult ProductCategory1(int id , decimal? min , decimal? max )
         {
-            var pro = _db.products.Where(x => x.CategoryID == id).ToList();
             var cat = _db.categories.ToList();
-            var categorywithproduct = new CategoryViewModel()
+            if (min == null)
             {
-                products = pro,
-                categories = cat,
-            };
-            return View(categorywithproduct);
+                var pro = _db.products.Where(x => x.CategoryID == id).ToList();
+                var categorywithproduct = new CategoryViewModel()
+                {
+                    products = pro,
+                    categories = cat,
+                };
+                return View(categorywithproduct);
+            }
+            else
+            {
+                if (max == null) {
+                    var prod = _db.products.Where(x => x.CategoryID == id).Where(x=>x.Price >= min).ToList();
+                    var categoryproduct = new CategoryViewModel()
+                    {
+                        products = prod,
+                        categories = cat,
+                    };
+                    return View(categoryproduct);
+                }
+                var pro = _db.products.Where(x => x.CategoryID == id).Where(x => x.Price >= min&& x.Price<=max).ToList();
+                var categorywithproduct = new CategoryViewModel()
+                {
+                    products = pro,
+                    categories = cat,
+                };
+                return View(categorywithproduct);
+
+            }
         }
         public IActionResult ShopCart()
         {
@@ -137,7 +182,7 @@ namespace ShopApplication.Controllers
             return RedirectToAction("ShopCart");
         }
         public IActionResult UpdateShopCart(int quantity, int id)
-            {
+        {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var UpdatedProduct = _db.carts.Where(c => c.UserId == userId).SingleOrDefault(c => c.Id == id);
 
